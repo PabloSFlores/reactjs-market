@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
 import { AuthContext } from '../../modules/auth/authContext';
 import { LoginScreen } from '../../modules/auth/LoginScreen';
+import { PublicNavbar } from '../PublicNavbar';
 
 export const AppRouter = () => {
   const { user } = useContext(AuthContext);
@@ -26,6 +27,7 @@ export const AppRouter = () => {
               </>
             ) : (
               <>
+                <PublicNavbar/>
                 <>PUBLICNAVBAR</>
                 <Container style={{ marginTop: '20px' }}>
                   <Routes>
