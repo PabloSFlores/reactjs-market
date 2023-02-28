@@ -35,8 +35,9 @@ export const LoginScreen = () => {
           };
           dispatch(action);
           navigation('/products', { replace: true });
+        }else{
+          throw Error()
         }
-        throw Error();
       } catch (err) {
         Alert.fire({
           title: 'Verificar datos',
@@ -103,6 +104,7 @@ export const LoginScreen = () => {
                         <Form.Group className="form-outline mb-4">
                           <Form.Label htmlFor="password">Contraseña</Form.Label>
                           <Form.Control
+                            type='password'
                             placeholder="*********"
                             id="password"
                             autoComplete="off"
