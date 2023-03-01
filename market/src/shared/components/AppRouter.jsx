@@ -16,7 +16,7 @@ export const AppRouter = () => {
         <Route
           path="/*"
           element={
-            user.isLogged ? (
+            !user.isLogged ? (
               <>
                 <AdminNavbar/>
                 <Container style={{ marginTop: '20px' }}>
