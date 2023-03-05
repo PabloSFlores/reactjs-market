@@ -13,9 +13,9 @@ const AdminNavbar = () => {
                     <Nav className="me-auto my-2 my-lg-0"
                         style={{ maxHeight: '100px' }}
                         navbarScroll>
-                        <Link to='/' className='ms-1'>Productos</Link>
-                        <Link to='/category' className='ms-1'>Categorias</Link>
-                        <Link to='/subcategory' className='ms-1'>Subcategorias</Link>
+                        <Link to='/' className='ms-1 nav-link'>Productos</Link>
+                        <Link to='/category' className='ms-1 nav-link'>Categorias</Link>
+                        <Link to='/subcategory' className='ms-1 nav-link'>Subcategorias</Link>
                     </Nav>
                     <Button variant='primary'>CERRAR SESIÓN</Button>
                 </Navbar.Collapse>
