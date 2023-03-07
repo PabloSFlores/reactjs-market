@@ -5,6 +5,7 @@ import AxiosClient from '../../shared/plugins/axios'
 import { ButtonCircle } from '../../shared/components/ButtonCircle'
 import { Loading } from '../../shared/components/Loading'
 import { FilterComponent } from '../../shared/components/FilterComponent'
+import { CategoryForm } from './components/CategoryForm'
 
 const options = {
     rowsPerPageText: 'Registros por página',
@@ -113,11 +114,15 @@ export const CategoryScreen = () => {
                 <Col className='text-end'>
                     <ButtonCircle
                         type={'btn btn-outline-success'}
-                        onClick={() => { }}
+                        onClick={()=>setIsOpen(true)}
                         icon='plus'
                         size={16}
                     />
-
+                    <CategoryForm
+                    isOpen={isOpen}
+                    onClose={()=>setIsOpen(false)}
+                    setCategories={setCategories}
+                    />
                 </Col>
             </Row>
         </Card.Header>

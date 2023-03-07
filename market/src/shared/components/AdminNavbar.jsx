@@ -1,9 +1,17 @@
 import React from 'react'
+import { useContext } from 'react'
 import { Nav, Navbar,Container, Button} from 'react-bootstrap'
-import {Link} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
+import {AuthContext} from '../../modules/auth/authContext.js'
 
 
 const AdminNavbar = () => {
+    const {dispatch} = useContext(AuthContext)
+    const navigate = useNavigate()
+    const handleLogout = () =>{
+        dispatch({type: 'LOGOUT'})
+        navigate('/auth',{replace: true})
+    }
     return (
         <Navbar bg="light" expand="lg">
             <Container fluid>
@@ -17,7 +25,7 @@ const AdminNavbar = () => {
                         <Link to='/category' className='ms-1 nav-link'>Categorias</Link>
                         <Link to='/subcategory' className='ms-1 nav-link'>Subcategorias</Link>
                     </Nav>
-                    <Button variant='primary'>CERRAR SESIÓN</Button>
+                    <Button onClick={handleLogout} variant='primary'>CERRAR SESIÓN</Button>
                 </Navbar.Collapse>
             </Container>
         </Navbar>
