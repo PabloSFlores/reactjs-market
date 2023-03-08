@@ -6,6 +6,7 @@ import { ButtonCircle } from '../../shared/components/ButtonCircle'
 import { Loading } from '../../shared/components/Loading'
 import { FilterComponent } from '../../shared/components/FilterComponent'
 import { CategoryForm } from './components/CategoryForm'
+import { EditCategoryForm } from './components/EditCategoryForm'
 
 const options = {
     rowsPerPageText: 'Registros por página',
@@ -122,6 +123,12 @@ export const CategoryScreen = () => {
                     isOpen={isOpen}
                     onClose={()=>setIsOpen(false)}
                     setCategories={setCategories}
+                    />
+                    <EditCategoryForm
+                        isOpen={isEditing}
+                        onClose={()=>setIsEditing(false)}
+                        setCategories={setCategories}
+                        category={selectedCategory}
                     />
                 </Col>
             </Row>
