@@ -7,6 +7,7 @@ import { Loading } from '../../shared/components/Loading'
 import { FilterComponent } from '../../shared/components/FilterComponent'
 import { CategoryForm } from './components/CategoryForm'
 import { EditCategoryForm } from './components/EditCategoryForm'
+import { ChangeStatus } from './components/ChangeStatus'
 
 const options = {
     rowsPerPageText: 'Registros por página',
@@ -18,6 +19,7 @@ export const CategoryScreen = () => {
     const [selectedCategory, setSelectedCategory] = useState({})
     const [isLoading, setIsLoading] = useState(false)
     const [isEditing, setIsEditing] = useState(false)
+    const [isChangingStatus, setIsChangingStatus] = useState(false)
     const [filterText, setFilterText] = useState("")
     const [isOpen, setIsOpen] = useState(false)
 
@@ -92,7 +94,8 @@ export const CategoryScreen = () => {
                     type={'btn btn-outline-danger btn-circle'}
                     size={16}
                     onClick={() => {
-
+                        setIsChangingStatus(true)
+                        setSelectedCategory(row)
                     }}
                 ></ButtonCircle>
             ) : (
@@ -101,7 +104,8 @@ export const CategoryScreen = () => {
                     type={'btn btn-outline-success btn-circle'}
                     size={16}
                     onClick={() => {
-
+                        setIsChangingStatus(true)
+                        setSelectedCategory(row)
                     }}
                 ></ButtonCircle>
             )}
@@ -115,18 +119,24 @@ export const CategoryScreen = () => {
                 <Col className='text-end'>
                     <ButtonCircle
                         type={'btn btn-outline-success'}
-                        onClick={()=>setIsOpen(true)}
+                        onClick={() => setIsOpen(true)}
                         icon='plus'
                         size={16}
                     />
                     <CategoryForm
-                    isOpen={isOpen}
-                    onClose={()=>setIsOpen(false)}
-                    setCategories={setCategories}
+                        isOpen={isOpen}
+                        onClose={() => setIsOpen(false)}
+                        setCategories={setCategories}
                     />
                     <EditCategoryForm
                         isOpen={isEditing}
-                        onClose={()=>setIsEditing(false)}
+                        onClose={() => setIsEditing(false)}
+                        setCategories={setCategories}
+                        category={selectedCategory}
+                    />
+                    <ChangeStatus
+                        isOpen={isChangingStatus}
+                        onClose={() => setIsChangingStatus(false)}
                         setCategories={setCategories}
                         category={selectedCategory}
                     />
