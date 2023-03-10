@@ -9,19 +9,19 @@ import Alert, {
 } from '../../../shared/plugins/alerts'
 
 
-export const ChangeStatus = ({ isOpen, setCategories, onClose, category }) => {
+export const EditCategoryForm = ({ isOpen, setCategories, onClose, category }) => {
     const form = useFormik({
         initialValues: {
             id: 0,
             name: '',
             status: false
         },
-        // validationSchema: yup.object().shape({
-        //     name: yup
-        //         .string()
-        //         .required('Campo obligatorio')
-        //         .min(4, 'Mínimo 4 caracteres'),
-        // }),
+        validationSchema: yup.object().shape({
+            name: yup
+                .string()
+                .required('Campo obligatorio')
+                .min(4, 'Mínimo 4 caracteres'),
+        }),
         onSubmit: async (values) => {
             Alert.fire({
                 title: confirmTitle,
@@ -39,17 +39,12 @@ export const ChangeStatus = ({ isOpen, setCategories, onClose, category }) => {
                 preConfirm: async () => {
                     try {
                         const response = await AxiosClient({
-                            method: 'PATCH',
+                            method: 'PUT',
                             url: '/category/',
                             data: JSON.stringify(values),
                         })
                         if (!response.error) {
-                            console.log('Response', response.data);
-                            console.log('Values ',values);
-                            // setCategories((categories) => [response.data, ...categories.filter((category) => category.id !== values.id)])
-                            if(response.data){
-                                category.status = !category.status
-                            }
+                            setCategories((categories) => [response.data, ...categories.filter((category)=> category.id !== values.id)])
                             Alert.fire({
                                 title: successTitle,
                                 text: successMsj,
@@ -82,12 +77,12 @@ export const ChangeStatus = ({ isOpen, setCategories, onClose, category }) => {
         }
     })
 
-    React.useMemo(() => {
-        const { name, id, status } = category
+    React.useMemo(()=>{
+        const {name, id, status } = category
         form.values.name = name
         form.values.id = id
         form.values.status = status
-    }, [category])
+    },[category])
 
     const handleClose = () => {
         form.resetForm()
@@ -95,17 +90,17 @@ export const ChangeStatus = ({ isOpen, setCategories, onClose, category }) => {
     }
 
     return (
-        <Modal
-            backdrop='static'
-            keyboard={false}
-            show={isOpen}
-            onHide={handleClose}>
-            <Modal.Header closeButton>
-                <Modal.Title>Cambiar estado</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-                <Form onSubmit={form.handleSubmit}>
-                    {/* <Form.Group className='mb-3'>
+    <Modal
+        backdrop='static'
+        keyboard={false}
+        show={isOpen}
+        onHide={handleClose}>
+        <Modal.Header closeButton>
+            <Modal.Title>Registra categoría</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+            <Form onSubmit={form.handleSubmit}>
+                <Form.Group className='mb-3'>
                     <Form.Label>Nombre</Form.Label>
                     <FormControl
                         name='name'
@@ -119,20 +114,20 @@ export const ChangeStatus = ({ isOpen, setCategories, onClose, category }) => {
                             {form.errors.name}
                         </span>)
                     }
-                </Form.Group> */}
-                    <Form.Group className='mb-3'>
-                        <Row>
-                            <Col className='text-end'>
-                                <Button className='me-2' variant='outline-danger' onClick={handleClose}>
-                                    <FeatherIcon icon='x' />&nbsp;Cerrar
-                                </Button>
-                                <Button type='submit' variant='outline-success'>
-                                    <FeatherIcon icon='check' />&nbsp;Guardar
-                                </Button>
-                            </Col>
-                        </Row>
-                    </Form.Group>
-                </Form>
-            </Modal.Body>
-        </Modal>)
+                </Form.Group>
+                <Form.Group className='mb-3'>
+                    <Row>
+                        <Col className='text-end'>
+                            <Button className='me-2' variant='outline-danger' onClick={handleClose}>
+                                <FeatherIcon icon='x'/>&nbsp;Cerrar
+                            </Button>
+                            <Button type='submit' variant='outline-success'>
+                                <FeatherIcon icon='check'/>&nbsp;Guardar
+                            </Button>
+                        </Col>
+                    </Row>
+                </Form.Group>
+            </Form>
+        </Modal.Body>
+    </Modal>)
 }
