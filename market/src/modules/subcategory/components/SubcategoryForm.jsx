@@ -9,11 +9,12 @@ import Alert, {
 } from '../../../shared/plugins/alerts'
 
 
-export const CategoryForm = ({ isOpen, setCategories, onClose }) => {
+export const SubcategoryForm = ({ isOpen, setSubcategories, onClose }) => {
     const form = useFormik({
         initialValues: {
             name: '',
             status: true,
+            categoy:''
         },
         validationSchema: yup.object().shape({
             name: yup
@@ -39,11 +40,11 @@ export const CategoryForm = ({ isOpen, setCategories, onClose }) => {
                     try {
                         const response = await AxiosClient({
                             method: 'POST',
-                            url: '/category/',
+                            url: '/subcategory/',
                             data: JSON.stringify(values),
                         })
                         if (!response.error) {
-                            setCategories((categories) => [response.data, ...categories])
+                            setSubcategories((subcategories) => [response.data, ...subcategories])
                             Alert.fire({
                                 title: successTitle,
                                 text: successMsj,
@@ -88,7 +89,7 @@ export const CategoryForm = ({ isOpen, setCategories, onClose }) => {
         show={isOpen}
         onHide={handleClose}>
         <Modal.Header closeButton>
-            <Modal.Title>Registra categoría</Modal.Title>
+            <Modal.Title>Registra Subcategoría</Modal.Title>
         </Modal.Header>
         <Modal.Body>
             <Form onSubmit={form.handleSubmit}>
@@ -96,8 +97,20 @@ export const CategoryForm = ({ isOpen, setCategories, onClose }) => {
                     <Form.Label>Nombre</Form.Label>
                     <FormControl
                         name='name'
-                        placeholder='Calzado'
+                        placeholder='Playera'
                         value={form.values.name}
+                        onChange={form.handleChange}
+                    />
+                    {
+                        form.errors.name &&
+                        (<span className='error-text'>
+                            {form.errors.name}
+                        </span>)
+                    }
+                    <FormControl
+                        name='category'
+                        placeholder='Ropa'
+                        value={form.values.categoy}
                         onChange={form.handleChange}
                     />
                     {

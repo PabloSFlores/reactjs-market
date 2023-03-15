@@ -9,7 +9,7 @@ import Alert, {
 } from '../../../shared/plugins/alerts'
 
 
-export const EditCategoryForm = ({ isOpen, setCategories, onClose, category }) => {
+export const EditSubcategoryForm = ({ isOpen, setCategories, onClose, category }) => {
     const form = useFormik({
         initialValues: {
             id: 0,
