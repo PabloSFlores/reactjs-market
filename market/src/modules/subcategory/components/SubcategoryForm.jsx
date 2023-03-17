@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useFormik } from 'formik'
 import { Button, Col, Row, Form, Modal, FormControl } from 'react-bootstrap'
 import * as yup from 'yup'
@@ -10,11 +10,36 @@ import Alert, {
 
 
 export const SubcategoryForm = ({ isOpen, setSubcategories, onClose }) => {
+    const [categories, setCategories] = useState([])
+    const [isLoading, setIsLoading] = useState(false)
+
+    const getCategories = async () => {
+        try {
+            setIsLoading(true)
+            const data = await AxiosClient({
+                url: '/category/'
+            })
+            console.log(data.data);
+            if (!data.error) setCategories(data.data)
+        } catch (error) {
+            //alerta de erro
+            console.error('Error', error);
+        } finally {
+            setIsLoading(false)
+        }
+    }
+    useEffect(() => {
+        getCategories()
+    }, [])
+
     const form = useFormik({
         initialValues: {
             name: '',
             status: true,
-            categoy:''
+            category: {
+                id: 0,
+                name: ''
+            }
         },
         validationSchema: yup.object().shape({
             name: yup
@@ -37,6 +62,7 @@ export const SubcategoryForm = ({ isOpen, setSubcategories, onClose }) => {
                 showLoaderOnConfirm: true,
                 allowOutsideClick: () => !Alert.isLoading,
                 preConfirm: async () => {
+                    console.log(values);
                     try {
                         const response = await AxiosClient({
                             method: 'POST',
@@ -83,56 +109,62 @@ export const SubcategoryForm = ({ isOpen, setSubcategories, onClose }) => {
     }
 
     return (
-    <Modal
-        backdrop='static'
-        keyboard={false}
-        show={isOpen}
-        onHide={handleClose}>
-        <Modal.Header closeButton>
-            <Modal.Title>Registra Subcategoría</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-            <Form onSubmit={form.handleSubmit}>
-                <Form.Group className='mb-3'>
-                    <Form.Label>Nombre</Form.Label>
-                    <FormControl
-                        name='name'
-                        placeholder='Playera'
-                        value={form.values.name}
-                        onChange={form.handleChange}
-                    />
-                    {
-                        form.errors.name &&
-                        (<span className='error-text'>
-                            {form.errors.name}
-                        </span>)
-                    }
-                    <FormControl
-                        name='category'
-                        placeholder='Ropa'
-                        value={form.values.categoy}
-                        onChange={form.handleChange}
-                    />
-                    {
-                        form.errors.name &&
-                        (<span className='error-text'>
-                            {form.errors.name}
-                        </span>)
-                    }
-                </Form.Group>
-                <Form.Group className='mb-3'>
-                    <Row>
-                        <Col className='text-end'>
-                            <Button className='me-2' variant='outline-danger' onClick={handleClose}>
-                                <FeatherIcon icon='x'/>&nbsp;Cerrar
-                            </Button>
-                            <Button type='submit' variant='outline-success'>
-                                <FeatherIcon icon='check'/>&nbsp;Guardar
-                            </Button>
-                        </Col>
-                    </Row>
-                </Form.Group>
-            </Form>
-        </Modal.Body>
-    </Modal>)
+        <Modal
+            backdrop='static'
+            keyboard={false}
+            show={isOpen}
+            onHide={handleClose}>
+            <Modal.Header closeButton>
+                <Modal.Title>Registra Subcategoría</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <Form onSubmit={form.handleSubmit}>
+                    <Form.Group className='mb-3'>
+                        <Form.Label>Nombre</Form.Label>
+                        <FormControl
+                            name='name'
+                            placeholder='Playera'
+                            value={form.values.name}
+                            onChange={form.handleChange}
+                        />
+                        {
+                            form.errors.name &&
+                            (<span className='error-text'>
+                                {form.errors.name}
+                            </span>)
+                        }
+                    </Form.Group>
+                    <Form.Group className="mb-3">
+                        <Form.Control as="select"
+                            name="category.id"
+                            value={form.values.category.id}
+                            onChange={form.handleChange}
+                        >
+                            <option>Seleccion de categoria</option>
+                            {categories.map(category => (
+                                <option
+                                    key={category.id}
+                                    value={category.id}
+                                    onChange={form.handleChange}
+                                >
+                                    {category.name}
+                                </option>
+                            ))}
+                        </Form.Control>
+                    </Form.Group>
+                    <Form.Group className='mb-3'>
+                        <Row>
+                            <Col className='text-end'>
+                                <Button className='me-2' variant='outline-danger' onClick={handleClose}>
+                                    <FeatherIcon icon='x' />&nbsp;Cerrar
+                                </Button>
+                                <Button type='submit' variant='outline-success'>
+                                    <FeatherIcon icon='check' />&nbsp;Guardar
+                                </Button>
+                            </Col>
+                        </Row>
+                    </Form.Group>
+                </Form>
+            </Modal.Body>
+        </Modal>)
 }

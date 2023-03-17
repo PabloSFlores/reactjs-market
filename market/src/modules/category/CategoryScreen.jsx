@@ -7,7 +7,6 @@ import { Loading } from '../../shared/components/Loading'
 import { FilterComponent } from '../../shared/components/FilterComponent'
 import { CategoryForm } from './components/CategoryForm'
 import { EditCategoryForm } from './components/EditCategoryForm'
-import { ChangeStatus } from './components/ChangeStatus'
 
 import Alert, {
     confirmMsj, confirmTitle, errorMsj, errorTitle, successMsj, successTitle

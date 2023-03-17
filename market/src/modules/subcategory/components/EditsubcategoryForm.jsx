@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useFormik } from 'formik'
 import { Button, Col, Row, Form, Modal, FormControl } from 'react-bootstrap'
 import * as yup from 'yup'
@@ -9,12 +9,37 @@ import Alert, {
 } from '../../../shared/plugins/alerts'
 
 
-export const EditSubcategoryForm = ({ isOpen, setCategories, onClose, category }) => {
+export const EditSubcategoryForm = ({ isOpen, setSubcategories, onClose, subcategory }) => {
+    console.log('sub',subcategory);
+    const [categories, setCategories] = useState([])
+    const [isLoading, setIsLoading] = useState(false)
+
+    const getCategories = async () => {
+        try {
+            setIsLoading(true)
+            const data = await AxiosClient({
+                url: '/category/'
+            })
+            if (!data.error) setCategories(data.data)
+        } catch (error) {
+            //alerta de erro
+            console.error('Error', error);
+        } finally {
+            setIsLoading(false)
+        }
+    }
+    useEffect(() => {
+        getCategories()
+    }, [])
+
     const form = useFormik({
         initialValues: {
             id: 0,
             name: '',
-            status: false
+            status: true,
+            category: {
+                id: 0
+            }
         },
         validationSchema: yup.object().shape({
             name: yup
@@ -37,14 +62,15 @@ export const EditSubcategoryForm = ({ isOpen, setCategories, onClose, category }
                 showLoaderOnConfirm: true,
                 allowOutsideClick: () => !Alert.isLoading,
                 preConfirm: async () => {
+                    console.log(values);
                     try {
                         const response = await AxiosClient({
                             method: 'PUT',
-                            url: '/category/',
+                            url: '/subcategory/',
                             data: JSON.stringify(values),
                         })
                         if (!response.error) {
-                            setCategories((categories) => [response.data, ...categories.filter((category)=> category.id !== values.id)])
+                            setSubcategories((subcategories) => [response.data, ...subcategories.filter((category) => category.id !== values.id)])
                             Alert.fire({
                                 title: successTitle,
                                 text: successMsj,
@@ -77,12 +103,13 @@ export const EditSubcategoryForm = ({ isOpen, setCategories, onClose, category }
         }
     })
 
-    React.useMemo(()=>{
-        const {name, id, status } = category
-        form.values.name = name
+    React.useMemo(() => {
+        const { name, id, status, category } = subcategory
         form.values.id = id
+        form.values.name = name
         form.values.status = status
-    },[category])
+        form.values.category.id = category.id
+    }, [subcategory])
 
     const handleClose = () => {
         form.resetForm()
@@ -90,44 +117,62 @@ export const EditSubcategoryForm = ({ isOpen, setCategories, onClose, category }
     }
 
     return (
-    <Modal
-        backdrop='static'
-        keyboard={false}
-        show={isOpen}
-        onHide={handleClose}>
-        <Modal.Header closeButton>
-            <Modal.Title>Registra categoría</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-            <Form onSubmit={form.handleSubmit}>
-                <Form.Group className='mb-3'>
-                    <Form.Label>Nombre</Form.Label>
-                    <FormControl
-                        name='name'
-                        placeholder='Calzado'
-                        value={form.values.name}
-                        onChange={form.handleChange}
-                    />
-                    {
-                        form.errors.name &&
-                        (<span className='error-text'>
-                            {form.errors.name}
-                        </span>)
-                    }
-                </Form.Group>
-                <Form.Group className='mb-3'>
-                    <Row>
-                        <Col className='text-end'>
-                            <Button className='me-2' variant='outline-danger' onClick={handleClose}>
-                                <FeatherIcon icon='x'/>&nbsp;Cerrar
-                            </Button>
-                            <Button type='submit' variant='outline-success'>
-                                <FeatherIcon icon='check'/>&nbsp;Guardar
-                            </Button>
-                        </Col>
-                    </Row>
-                </Form.Group>
-            </Form>
-        </Modal.Body>
-    </Modal>)
+        <Modal
+            backdrop='static'
+            keyboard={false}
+            show={isOpen}
+            onHide={handleClose}>
+            <Modal.Header closeButton>
+                <Modal.Title>Editar Subcategoría</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <Form onSubmit={form.handleSubmit}>
+                    <Form.Group className='mb-3'>
+                        <Form.Label>Nombre</Form.Label>
+                        <FormControl
+                            name='name'
+                            placeholder='Playera'
+                            value={form.values.name}
+                            onChange={form.handleChange}
+                        />
+                        {
+                            form.errors.name &&
+                            (<span className='error-text'>
+                                {form.errors.name}
+                            </span>)
+                        }
+                    </Form.Group>
+                    <Form.Group className="mb-3">
+                        <Form.Control as="select"
+                            name="category.id"
+                            value={form.values.category.id}
+                            onChange={form.handleChange}
+                        >
+                            <option>{subcategory.category?.name}</option>
+                            {categories.map(category => (
+                                <option
+                                    key={category.id}
+                                    value={category.id}
+                                    onChange={form.handleChange}
+                                >
+                                    {category.name}
+                                </option>
+                            ))}
+                        </Form.Control>
+                    </Form.Group>
+                    <Form.Group className='mb-3'>
+                        <Row>
+                            <Col className='text-end'>
+                                <Button className='me-2' variant='outline-danger' onClick={handleClose}>
+                                    <FeatherIcon icon='x' />&nbsp;Cerrar
+                                </Button>
+                                <Button type='submit' variant='outline-success'>
+                                    <FeatherIcon icon='check' />&nbsp;Guardar
+                                </Button>
+                            </Col>
+                        </Row>
+                    </Form.Group>
+                </Form>
+            </Modal.Body>
+        </Modal>)
 }

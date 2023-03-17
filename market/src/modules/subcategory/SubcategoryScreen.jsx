@@ -172,7 +172,7 @@ export const SubcategoryScreen = () => {
     return <Card>
         <Card.Header>
             <Row>
-                <Col>Categorias</Col>
+                <Col>Subcategorias</Col>
                 <Col className='text-end'>
                     <ButtonCircle
                         type={'btn btn-outline-success'}
@@ -185,13 +185,12 @@ export const SubcategoryScreen = () => {
                         onClose={() => setIsOpen(false)}
                         setSubcategories={setSubcategories}
                     />
-                    {/*
                     <EditSubcategoryForm
                         isOpen={isEditing}
                         onClose={() => setIsEditing(false)}
                         setSubcategories={setSubcategories}
                         subcategory={selectedSubcategory}
-                    /> */}
+                    />
                 </Col>
             </Row>
         </Card.Header>
