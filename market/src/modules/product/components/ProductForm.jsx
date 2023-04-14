@@ -9,18 +9,18 @@ import Alert, {
 } from '../../../shared/plugins/alerts'
 
 
-export const EditSubcategoryForm = ({ isOpen, setSubcategories, onClose, subcategory }) => {
-    console.log('sub',subcategory);
-    const [categories, setCategories] = useState([])
+export const ProductForm = ({ isOpen, setProducts, onClose }) => {
+    const [subCategories, setSubCategories] = useState([])
     const [isLoading, setIsLoading] = useState(false)
 
-    const getCategories = async () => {
+    const getSubCategories = async () => {
         try {
             setIsLoading(true)
             const data = await AxiosClient({
-                url: '/category/'
+                url: '/subcategory/'
             })
-            if (!data.error) setCategories(data.data)
+            console.log(data.data);
+            if (!data.error) setSubCategories(data.data)
         } catch (error) {
             //alerta de erro
             console.error('Error', error);
@@ -29,17 +29,19 @@ export const EditSubcategoryForm = ({ isOpen, setSubcategories, onClose, subcate
         }
     }
     useEffect(() => {
-        getCategories()
+        getSubCategories()
     }, [])
 
     const form = useFormik({
         initialValues: {
-            id: 0,
-            name: '',
-            status: true,
-            category: {
+            name: "",
+            description: "",
+            price: 0,
+            stock: 0,
+            brand: "",
+            subCategory: {
                 id: 0
-            }
+            },
         },
         validationSchema: yup.object().shape({
             name: yup
@@ -65,12 +67,12 @@ export const EditSubcategoryForm = ({ isOpen, setSubcategories, onClose, subcate
                     console.log(values);
                     try {
                         const response = await AxiosClient({
-                            method: 'PUT',
-                            url: '/subcategory/',
+                            method: 'POST',
+                            url: '/product/',
                             data: JSON.stringify(values),
                         })
                         if (!response.error) {
-                            setSubcategories((subcategories) => [response.data, ...subcategories.filter((category) => category.id !== values.id)])
+                            setProducts((products) => [response.data, ...products])
                             Alert.fire({
                                 title: successTitle,
                                 text: successMsj,
@@ -103,14 +105,6 @@ export const EditSubcategoryForm = ({ isOpen, setSubcategories, onClose, subcate
         }
     })
 
-    React.useMemo(() => {
-        const { name, id, status, category } = subcategory
-        form.values.id = id
-        form.values.name = name
-        form.values.status = status
-        form.values.category.id = category?.id
-    }, [subcategory])
-
     const handleClose = () => {
         form.resetForm()
         onClose()
@@ -123,7 +117,7 @@ export const EditSubcategoryForm = ({ isOpen, setSubcategories, onClose, subcate
             show={isOpen}
             onHide={handleClose}>
             <Modal.Header closeButton>
-                <Modal.Title>Editar Subcategoría</Modal.Title>
+                <Modal.Title>Registra Subcategoría</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Form onSubmit={form.handleSubmit}>
@@ -142,20 +136,69 @@ export const EditSubcategoryForm = ({ isOpen, setSubcategories, onClose, subcate
                             </span>)
                         }
                     </Form.Group>
+                    <Form.Group className='mb-3'>
+                        <Form.Label>Precio</Form.Label>
+                        <FormControl
+                            type='number'
+                            name='price'
+                            placeholder='100'
+                            value={form.values.price}
+                            onChange={form.handleChange}
+                        />
+                        {
+                            form.errors.price &&
+                            (<span className='error-text'>
+                                {form.errors.price}
+                            </span>)
+                        }
+                    </Form.Group>
+                    <Form.Group className='mb-3'>
+                        <Form.Label>Marca</Form.Label>
+                        <FormControl
+                            name='brand'
+                            placeholder='coca-cola'
+                            value={form.values.brand}
+                            onChange={form.handleChange}
+                        />
+                        {
+                            form.errors.brand &&
+                            (<span className='error-text'>
+                                {form.errors.brand}
+                            </span>)
+                        }
+                    </Form.Group>
+                    <Form.Group className='mb-3'>
+                        <Form.Label>Descripción</Form.Label>
+                        <FormControl
+                            as='textarea'
+                            rows={3}
+                            name='description'
+                            placeholder='Es color roja, es de tamaño mediana ...'
+                            value={form.values.description}
+                            onChange={form.handleChange}
+                        />
+                        {
+                            form.errors.description &&
+                            (<span className='error-text'>
+                                {form.errors.description}
+                            </span>)
+                        }
+                    </Form.Group>
                     <Form.Group className="mb-3">
+                        <Form.Label>SubCategoria</Form.Label>
                         <Form.Control as="select"
-                            name="category.id"
-                            value={form.values.category.id}
+                            name="subCategory.id"
+                            value={form.values.subCategory.id}
                             onChange={form.handleChange}
                         >
-                            <option>{subcategory.category?.name}</option>
-                            {categories.map(category => (
+                            <option>Seleccion de SubCategoria</option>
+                            {subCategories.map(subCategory => (
                                 <option
-                                    key={category.id}
-                                    value={category.id}
+                                    key={subCategory.id}
+                                    value={subCategory.id}
                                     onChange={form.handleChange}
                                 >
-                                    {category.name}
+                                    {subCategory.name}
                                 </option>
                             ))}
                         </Form.Control>
